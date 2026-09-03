@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Flame, 
   Flag, 
@@ -17,6 +17,7 @@ import {
   RotateCcw
 } from 'lucide-react';
 import { UserProfile, TrainingWeek, WorkoutItem, ActiveView } from '../types';
+import { WeeklyReviewCard } from './WeeklyReviewCard';
 
 interface DashboardProps {
   user: UserProfile;
@@ -46,6 +47,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const targetMileage = currentWeek?.targetMileageKm || 40;
   const completedMileage = currentWeek?.workouts?.reduce((sum, w) => sum + (w.completed ? (w.actualDistanceKm || w.targetDistanceKm) : 0), 0) || 12.4;
   const mileagePercent = Math.min(100, Math.round((completedMileage / targetMileage) * 100));
+
+  // Weekly review dismiss state
+  const [isReviewDismissed, setIsReviewDismissed] = useState(() => {
+    const weekKey = `strideiq_weekly_review_week_${currentWeek?.weekNumber || 1}`;
+    return localStorage.getItem(weekKey) === 'dismissed';
+  });
+
+  const handleDismissReview = () => {
+    setIsReviewDismissed(true);
+    const weekKey = `strideiq_weekly_review_week_${currentWeek?.weekNumber || 1}`;
+    localStorage.setItem(weekKey, 'dismissed');
+  };
 
   return (
     <div className="min-h-screen bg-[#0A0A0B] text-white p-4 sm:p-6 lg:p-8 space-y-8 max-w-7xl mx-auto pb-28">
@@ -96,6 +109,17 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
         )}
       </div>
+
+      {/* Weekly Review Card */}
+      {!isReviewDismissed && (
+        <WeeklyReviewCard
+          user={user}
+          plan={plan}
+          onNavigateToAI={() => onNavigate('ai_coach')}
+          onDismiss={handleDismissReview}
+          isDismissed={isReviewDismissed}
+        />
+      )}
 
       {/* Main Grid Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
