@@ -1,0 +1,6 @@
+{
+  "name": "StrideIQ",
+  "description": "Mobile-first AI training & social share platform for runners and HYROX athletes with customizable story studio.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
